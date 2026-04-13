@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shunt-reactor-engineering"
+version = "2.0.0"
+description = "Desktop report generator for charging current, reactive power, and switching current review."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.9",
+    "uvicorn[standard]>=0.30,<1.0",
+]
+
+[project.scripts]
+shunt-reactor-app = "shunt_reactor_engineering.app:main"
+shunt-reactor-web = "shunt_reactor_engineering.web.main:run"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"shunt_reactor_engineering" = [
+    "resources/latex/*.jinja",
+    "web/pages/*/templates/*.html",
+    "web/shared/static/*",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--basetemp=.pytest-tmp"

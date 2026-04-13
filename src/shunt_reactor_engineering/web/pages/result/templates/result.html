@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>계산 결과 | Shunt Reactor Engineering</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero card compact">
+        <div>
+          <p class="eyebrow">Result</p>
+          <h1>{{ form.project_name }}</h1>
+          <p class="lead">{{ selected_cable.label }} 기준 계산 결과입니다.</p>
+        </div>
+        <a class="secondary-link" href="/">다시 계산하기</a>
+      </section>
+
+      {% if report_error %}
+      <section class="card error-banner">
+        <h2>PDF 생성 오류</h2>
+        <p>{{ report_error }}</p>
+      </section>
+      {% endif %}
+
+      <section class="card metrics-grid">
+        <article>
+          <h2>총 회선 길이</h2>
+          <strong>{{ '%.3f'|format(result.total_length_km) }} km</strong>
+        </article>
+        <article>
+          <h2>충전전류</h2>
+          <strong>{{ '%.3f'|format(result.charging_current_a) }} A</strong>
+          <p>{{ '%.3f'|format(result.charging_current_per_km_a) }} A/km</p>
+        </article>
+        <article>
+          <h2>무효전력</h2>
+          <strong>{{ '%.3f'|format(result.reactive_power_mvar) }} MVar</strong>
+        </article>
+        <article>
+          <h2>권장 보상용량</h2>
+          <strong>{{ '%.3f'|format(result.recommended_compensation_mvar) }} MVar</strong>
+        </article>
+        <article>
+          <h2>개폐전류 여유</h2>
+          <strong>{{ '%.3f'|format(result.switching_margin_a) }} A</strong>
+        </article>
+        <article>
+          <h2>개폐전류 사용률</h2>
+          <strong>{{ '%.2f'|format(result.switching_utilization_pct) }}%</strong>
+          <p class="{{ 'danger' if result.switching_limit_exceeded else 'ok' }}">
+            {{ '허용치 초과' if result.switching_limit_exceeded else '허용 범위 내' }}
+          </p>
+        </article>
+      </section>
+
+      <section class="card details-grid">
+        <article>
+          <h2>입력 조건</h2>
+          <ul>
+            <li>선간전압: {{ form.line_voltage_kv }} kV</li>
+            <li>주파수: {{ form.frequency_hz }} Hz</li>
+            <li>케이블: {{ selected_cable.label }}</li>
+            <li>정전용량: {{ form.capacitance_uf_per_km }} μF/km</li>
+            <li>회선 길이: {{ form.route_length_km }} km</li>
+            <li>회선 수: {{ form.circuit_count }}</li>
+            <li>허용 개폐전류: {{ form.switching_limit_a }} A</li>
+            <li>보상용량: {{ form.compensation_mvar if form.compensation_mvar is not none else '자동 산정' }}</li>
+          </ul>
+        </article>
+        <article>
+          <h2>검토 포인트</h2>
+          <ul>
+            <li>허용 개폐선로 환산 길이: {{ '%.3f'|format(result.max_route_length_per_circuit_km) }} km/회선</li>
+            <li>허용 총 길이: {{ '%.3f'|format(result.max_total_length_km) }} km</li>
+            <li>권장 보상용량은 계산 결과 기준 올림값 또는 수동 입력값을 사용합니다.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="card actions-row">
+        <form method="post" action="/report">
+          <input type="hidden" name="project_name" value="{{ form.project_name }}" />
+          <input type="hidden" name="line_voltage_kv" value="{{ form.line_voltage_kv }}" />
+          <input type="hidden" name="frequency_hz" value="{{ form.frequency_hz }}" />
+          <input type="hidden" name="cable_code" value="{{ form.cable_code }}" />
+          <input type="hidden" name="capacitance_uf_per_km" value="{{ form.capacitance_uf_per_km }}" />
+          <input type="hidden" name="route_length_km" value="{{ form.route_length_km }}" />
+          <input type="hidden" name="circuit_count" value="{{ form.circuit_count }}" />
+          <input type="hidden" name="switching_limit_a" value="{{ form.switching_limit_a }}" />
+          <input type="hidden" name="compensation_mvar" value="{{ form.compensation_mvar if form.compensation_mvar is not none else '' }}" />
+          <button type="submit">PDF 다운로드</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

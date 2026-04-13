@@ -1,0 +1,27 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - sympy
+  - jupyterlab
+  - ipykernel
+  - openpyxl
+  - pillow
+  - pytest
+  - ruff
+  - jinja2
+  - pyside6
+  - tectonic
+  - tk
+  - pip
+  - pip:
+      - -e .
+      - Nuitka
+      - PyMuPDF
+      - zstandard

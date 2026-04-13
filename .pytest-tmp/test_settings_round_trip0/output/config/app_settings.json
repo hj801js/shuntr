@@ -1,0 +1,10 @@
+{
+  "logo_path": "data/uptec_logo.jpg",
+  "cables": [
+    {
+      "code": "xlpe_400",
+      "label": "154kV XLPE 400 mm²",
+      "capacitance_uf_per_km": 0.14
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/src"
+    ],
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.conda_envs/shuntreactorengineering",
+    "python.terminal.activateEnvironment": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "terminal.integrated.profiles.windows": {
+        "Power Conda (shuntreactorengineering)": {
+            "source": "PowerShell",
+            "args": [
+                "-NoExit",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\activate_power_conda.ps1"
+            ]
+        }
+    },
+    "terminal.integrated.profiles.osx": {
+        "Power Conda (shuntreactorengineering)": {
+            "path": "zsh",
+            "args": [
+                "-lc",
+                "source \"$(conda info --base)/etc/profile.d/conda.sh\" && conda activate \"${workspaceFolder}/.conda_envs/shuntreactorengineering\" && exec zsh -li"
+            ]
+        }
+    },
+    "terminal.integrated.env.osx": {
+        "CONDA_ENVS_PATH": "${workspaceFolder}/.conda_envs",
+        "CONDA_PKGS_DIRS": "${workspaceFolder}/.conda_pkgs",
+        "MPLCONFIGDIR": "${workspaceFolder}/.mplconfig",
+        "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "terminal.integrated.env.windows": {
+        "CONDA_ENVS_PATH": "${workspaceFolder}\\.conda_envs",
+        "CONDA_PKGS_DIRS": "${workspaceFolder}\\.conda_pkgs",
+        "MPLCONFIGDIR": "${workspaceFolder}\\.mplconfig",
+        "PYTHONDONTWRITEBYTECODE": "1"
+    }
+}

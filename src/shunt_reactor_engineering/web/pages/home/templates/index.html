@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shunt Reactor Engineering Web</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero card">
+        <div>
+          <p class="eyebrow">Web App</p>
+          <h1>Shunt Reactor Engineering</h1>
+          <p class="lead">지중 케이블 충전전류, 무효전력, 개폐전류 검토 결과를 브라우저에서 계산하고 PDF로 다운로드합니다.</p>
+        </div>
+      </section>
+
+      <section class="card form-card">
+        <h2>입력 조건</h2>
+        <form method="post" action="/analyze" class="form-grid">
+          <label>
+            <span>프로젝트명</span>
+            <input type="text" name="project_name" value="{{ form.project_name }}" />
+            {% if errors.get('project_name') %}<small class="error">{{ errors.get('project_name') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>선간전압 (kV)</span>
+            <input type="number" step="0.1" name="line_voltage_kv" value="{{ form.line_voltage_kv }}" />
+            {% if errors.get('line_voltage_kv') %}<small class="error">{{ errors.get('line_voltage_kv') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>주파수 (Hz)</span>
+            <input type="number" step="0.1" name="frequency_hz" value="{{ form.frequency_hz }}" />
+            {% if errors.get('frequency_hz') %}<small class="error">{{ errors.get('frequency_hz') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>케이블</span>
+            <select name="cable_code" id="cable_code">
+              {% for option in cable_options %}
+              <option value="{{ option.code }}" {% if option.code == form.cable_code %}selected{% endif %}>{{ option.label }}</option>
+              {% endfor %}
+            </select>
+            {% if errors.get('cable_code') %}<small class="error">{{ errors.get('cable_code') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>정전용량 (μF/km)</span>
+            <input type="number" step="0.001" name="capacitance_uf_per_km" id="capacitance_uf_per_km" value="{{ form.capacitance_uf_per_km }}" />
+            {% if selected_cable %}<small class="hint">기본값: {{ selected_cable.label }} → {{ selected_cable.capacitance_uf_per_km }} μF/km</small>{% endif %}
+            {% if errors.get('capacitance_uf_per_km') %}<small class="error">{{ errors.get('capacitance_uf_per_km') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>회선 길이 (km)</span>
+            <input type="number" step="0.001" name="route_length_km" value="{{ form.route_length_km }}" />
+            {% if errors.get('route_length_km') %}<small class="error">{{ errors.get('route_length_km') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>회선 수</span>
+            <input type="number" step="1" name="circuit_count" value="{{ form.circuit_count }}" />
+            {% if errors.get('circuit_count') %}<small class="error">{{ errors.get('circuit_count') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>허용 개폐전류 (A)</span>
+            <input type="number" step="0.1" name="switching_limit_a" value="{{ form.switching_limit_a }}" />
+            {% if errors.get('switching_limit_a') %}<small class="error">{{ errors.get('switching_limit_a') }}</small>{% endif %}
+          </label>
+
+          <label>
+            <span>보상용량 (MVar, 선택)</span>
+            <input type="number" step="0.01" name="compensation_mvar" value="{{ form.compensation_mvar if form.compensation_mvar is not none else '' }}" />
+            {% if errors.get('compensation_mvar') %}<small class="error">{{ errors.get('compensation_mvar') }}</small>{% endif %}
+          </label>
+
+          <div class="actions">
+            <button type="submit">계산하기</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      const cableOptions = {{ cable_options | tojson }};
+      const cableSelect = document.getElementById('cable_code');
+      const capacitanceInput = document.getElementById('capacitance_uf_per_km');
+      cableSelect?.addEventListener('change', () => {
+        const selected = cableOptions.find((item) => item.code === cableSelect.value);
+        if (selected && capacitanceInput) {
+          capacitanceInput.value = selected.capacitance;
+        }
+      });
+    </script>
+  </body>
+</html>
